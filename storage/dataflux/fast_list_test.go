@@ -200,7 +200,7 @@ func TestNewLister(t *testing.T) {
 	}
 }
 
-func TestNextBatchEmulated(t *testing.T) {
+func TestNextBatchContextCancelEmulated(t *testing.T) {
 	transportClientTest(context.Background(), t, func(t *testing.T, ctx context.Context, project, bucket string, client *storage.Client) {
 
 		bucketHandle := client.Bucket(bucket)
@@ -209,8 +209,8 @@ func TestNextBatchEmulated(t *testing.T) {
 		}); err != nil {
 			t.Fatal(err)
 		}
-		wantObjects := 2
-		if err := createObject(ctx, bucketHandle, wantObjects); err != nil {
+		if err := createObject(ctx, bucketHandle, 2, ""); err != nil {
+		if err := createObject(ctx, bucketHandle, 2, ""); err != nil {
 			t.Fatalf("unable to create objects: %v", err)
 		}
 		c := NewLister(client, &ListerInput{BucketName: bucket})
