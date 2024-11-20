@@ -70,7 +70,7 @@ func listNextPageSequentially(objectIterator *storage.ObjectIterator, skipDirect
 			err = errObjectIterator
 			return
 		}
-		// pageSize tracks the number of objects iterated through
+		// pageSize tracks the number of objects iterated through.
 		pageSize++
 		if !(skipDirectoryObjects && strings.HasSuffix(attrs.Name, "/")) {
 			results = append(results, attrs)

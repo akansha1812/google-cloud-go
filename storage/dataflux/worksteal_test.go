@@ -16,10 +16,25 @@ package dataflux
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"cloud.google.com/go/storage"
 )
+
+// createObject creates given number of objects in the given bucket.
+func createObjectWithVersion(ctx context.Context, bucket *storage.BucketHandle, numObjects int, objectName string) error {
+	for i := 0; i < numObjects; i++ {
+		// Create a writer for the object
+		wc := bucket.Object(objectName).NewWriter(ctx)
+
+		// Close the writer to finalize the upload
+		if err := wc.Close(); err != nil {
+			return fmt.Errorf("failed to close writer for object %q: %v", objectName, err)
+		}
+	}
+	return nil
+}
 
 func TestWorkstealListingEmulated(t *testing.T) {
 	transportClientTest(context.Background(), t, func(t *testing.T, ctx context.Context, project, bucket string, client *storage.Client) {
@@ -32,7 +47,7 @@ func TestWorkstealListingEmulated(t *testing.T) {
 			t.Fatal(err)
 		}
 		numObjects := 10
-		if err := createObject(ctx, bucketHandle, numObjects); err != nil {
+		if err := createObject(ctx, bucketHandle, numObjects, ""); err != nil {
 			t.Fatalf("unable to create objects: %v", err)
 		}
 		in := &ListerInput{
